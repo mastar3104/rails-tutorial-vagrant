@@ -9,4 +9,4 @@
   shell: |
    curl -sL https://cdn.learnenough.com/heroku_install > /tmp/heroku_install
    source /tmp/heroku_install
-  # when: result|failed
+  when: result|failed
