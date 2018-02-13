@@ -1,0 +1,12 @@
+---
+- name: setup nodejs 8.x
+  become: true
+  shell: curl -sL https://rpm.nodesource.com/setup_8.x | bash -
+
+- name: install node.js
+  become: true
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - gcc-c++
+    - make
+    - nodejs

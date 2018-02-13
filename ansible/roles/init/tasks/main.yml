@@ -1,0 +1,21 @@
+---
+- name: yum update
+  become: yes
+  yum: name=* state=latest
+
+- name: change timezone to Asia/Tokyo
+  become: yes
+  file: src=/usr/share/zoneinfo/Asia/Tokyo dest=/etc/localtime state=link force=true
+
+- name: yum install list
+  become: yes
+  yum: name={{item}} state=latest
+  with_items:
+        - gcc
+        - gcc-c++
+        - zlib-devel
+        - openssl-devel
+        - readline-devel
+        - libffi-devel
+        - sqlite-devel
+        - postgresql-devel

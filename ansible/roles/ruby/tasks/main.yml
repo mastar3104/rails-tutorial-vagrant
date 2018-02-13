@@ -1,0 +1,44 @@
+---
+- name: rbenv repo exists
+  become: true
+  stat: path={{ rbenv_path }}
+  register: repo
+
+- name: Git clone rbenv
+  become: true
+  git:
+      repo: 'https://github.com/sstephenson/rbenv.git'
+      dest: "{{ rbenv_path }}"
+  when: not repo.stat.exists
+
+- name: git pass
+  become: true
+  shell: echo 'export PATH="{{ rbenv_path }}/bin:$PATH"' >> "{{ ruby_user }}/.bash_profile"; echo 'eval "$(rbenv init -)"' >> "{{ ruby_user }}/.bash_profile"
+  when: not repo.stat.exists
+
+- name: rbenv-build repo exists
+  become: true
+  stat: path="{{ rbenv_path }}/plugins/ruby-build"
+  register: repo_build
+
+- name: Git clone ruby-build
+  become: true
+  git:
+      repo: 'https://github.com/rbenv/ruby-build.git'
+      dest: "{{ rbenv_path }}/plugins/ruby-build"
+  when: not repo_build.stat.exists
+
+- name: ruby-build Install
+  become: true
+  shell: sh "{{ rbenv_path }}/plugins/ruby-build/install.sh"
+  when: not repo_build.stat.exists
+
+- name: install ruby
+  become: true
+  shell: "{{ rbenv_path }}/bin/rbenv install {{ ruby_ver }}; {{ rbenv_path }}/bin/rbenv rehash; {{ rbenv_path }}/bin/rbenv global {{ ruby_ver }}"
+  when: not repo_build.stat.exists
+
+- name: install rails
+  become: true
+  shell: "{{ rbenv_path }}/shims/gem install rails"
+  when: not repo_build.stat.exists
